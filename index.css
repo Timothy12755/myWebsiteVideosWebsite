@@ -1,4 +1,4 @@
-/* Base Page Styles */
+/* Base Layout Configurations */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -7,7 +7,6 @@ body {
     color: #ffffff;
 }
 
-/* Header Styles */
 header {
     background-color: #1f1f1f;
     padding: 15px 30px;
@@ -25,7 +24,6 @@ header h1 {
     color: #ff4757;
 }
 
-/* Styled Upload Button */
 .upload-btn {
     background-color: #ff4757;
     color: white;
@@ -38,15 +36,9 @@ header h1 {
     transition: background 0.2s, transform 0.1s;
 }
 
-.upload-btn:hover {
-    background-color: #e84118;
-}
+.upload-btn:hover { background-color: #e84118; }
+.upload-btn:active { transform: scale(0.95); }
 
-.upload-btn:active {
-    transform: scale(0.95);
-}
-
-/* Search Bar Wrapper Styling */
 .search-container {
     margin-bottom: 20px;
     width: 100%;
@@ -64,12 +56,8 @@ header h1 {
     box-sizing: border-box;
 }
 
-#searchBar:focus {
-    outline: none;
-    border-color: #ff4757;
-}
+#searchBar:focus { outline: none; border-color: #ff4757; }
 
-/* App Layout Structure */
 .layout-container {
     display: flex;
     max-width: 1400px;
@@ -77,7 +65,6 @@ header h1 {
     min-height: calc(100vh - 80px);
 }
 
-/* Sidebar Navigation Layout */
 .sidebar {
     width: 240px;
     background-color: #1a1a1a;
@@ -93,11 +80,7 @@ header h1 {
     letter-spacing: 1px;
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
 
 .sidebar li {
     padding: 12px 15px;
@@ -108,18 +91,9 @@ header h1 {
     transition: background 0.2s;
 }
 
-.sidebar li:hover {
-    background-color: #2a2a2a;
-    color: #fff;
-}
+.sidebar li:hover { background-color: #2a2a2a; color: #fff; }
+.sidebar li.active { background-color: #ff4757; color: #fff; font-weight: bold; }
 
-.sidebar li.active {
-    background-color: #ff4757;
-    color: #fff;
-    font-weight: bold;
-}
-
-/* Video Grid Workspace */
 .content-area {
     flex: 1;
     padding: 25px;
@@ -133,23 +107,28 @@ header h1 {
     padding-left: 10px;
 }
 
-.video-grid {
+.media-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* Card Block Containers */
-.video-card {
+/* Card Block Architectures */
+.media-card {
     position: relative;
     background-color: #1f1f1f;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     height: fit-content;
+    border-top: 4px solid #333;
 }
 
-/* Card Delete Control Pin button styling */
+/* Color code individual formats dynamically */
+.media-card.type-video { border-top-color: #ff4757; }
+.media-card.type-image { border-top-color: #2ed573; }
+.media-card.type-document { border-top-color: #1e90ff; }
+
 .delete-btn {
     position: absolute;
     top: 8px;
@@ -164,254 +143,96 @@ header h1 {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s, transform 0.1s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-.delete-btn:hover {
-    background-color: #ff4757;
-    transform: scale(1.1);
-}
+.delete-btn:hover { background-color: #ff4757; transform: scale(1.1); }
 
-.video-wrapper {
+.media-wrapper {
     position: relative;
     width: 100%;
     padding-top: 56.25%; 
     background-color: #000;
 }
 
-.video-wrapper video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
+.media-wrapper video {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
 }
 
-.video-info {
-    padding: 15px;
-}
-
-.video-info h3 {
-    margin: 0 0 8px 0;
-    font-size: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.video-info p {
-    margin: 0;
-    font-size: 12px;
-    color: #aaa;
-}
-
-/* Modern Popup Overlay System */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
+/* Styled document asset wrapper elements */
+.doc-placeholder {
+    background-color: #1e272e;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
 }
 
-.modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.modal-box {
-    background-color: #1f1f1f;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    border: 1px solid #333;
-}
-
-.modal-box h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #ff4757;
-}
-
-.modal-box label {
-    display: block;
-    font-size: 13px;
-    color: #aaa;
-    margin-bottom: 5px;
-}
-
-.modal-box input, .modal-box select {
-    width: 100%;
-    padding: 10px;
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.modal-box input:focus, .modal-box select:focus {
-    outline: none;
-    border-color: #ff4757;
-}
-
-/* Action Control Configuration inside Modal */
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.modal-actions button {
-    padding: 10px 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.doc-icon { font-size: 40px; margin-bottom: 2px; }
+.file-extension-tag {
+    background-color: #1e90ff;
+    padding: 2px 8px;
+    font-size: 11px;
     font-weight: bold;
-    font-size: 14px;
+    border-radius: 4px;
+    text-transform: uppercase;
 }
 
-.cancel-btn {
-    background-color: #333;
-    color: white;
+.media-info { padding: 15px; }
+.media-info h3 {
+    margin: 0 0 5px 0; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.cancel-btn:hover {
-    background-color: #444;
+.file-name-meta {
+    margin: 0 0 10px 0; font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.save-btn {
-    background-color: #2ed573;
-    color: white;
+.download-link-btn {
+    display: inline-block; width: 100%; text-align: center; background-color: #2f3640;
+    color: white; text-decoration: none; padding: 8px 0; font-size: 13px; border-radius: 4px; font-weight: bold;
 }
+.download-link-btn:hover { background-color: #3d3d3d; }
 
-.save-btn:hover {
-    background-color: #26af5f;
-}
-
-/* Mobile Screen Modifications */
-@media (max-width: 768px) {
-    .layout-container {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        width: auto;
-        border-right: none;
-        border-bottom: 1px solid #333;
-        padding: 15px;
-    }
-
-    .sidebar ul {
-        display: flex;
-        overflow-x: auto;
-        gap: 10px;
-    }
-
-    .sidebar li {
-        margin-bottom: 0;
-        white-space: nowrap;
-        padding: 8px 15px;
-    }
-
-    header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    /* --- Lock Screen Styling --- */
+/* Security Overlay Styles */
 .lock-screen-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #0b0b0b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;
 }
 
 .lock-box {
-    background-color: #1f1f1f;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-    border: 1px solid #333;
-    text-align: center;
-    max-width: 360px;
-    width: 85%;
+    background-color: #1f1f1f; padding: 40px; border-radius: 12px; text-align: center; max-width: 360px; width: 85%; border: 1px solid #333;
 }
 
-.lock-box h2 {
-    margin-top: 0;
-    color: #ff4757;
-    font-size: 24px;
-}
-
-.lock-box p {
-    color: #aaa;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
+.lock-box h2 { margin-top: 0; color: #ff4757; }
 .lock-box input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 16px;
-    letter-spacing: 3px;
-}
-
-.lock-box input[type="password"]:focus {
-    outline: none;
-    border-color: #ff4757;
+    width: 100%; padding: 12px; background-color: #2d2d2d; border: 1px solid #444; color: white; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 16px;
 }
 
 .lock-box button {
-    width: 100%;
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
+    width: 100%; background-color: #ff4757; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer;
 }
 
-.lock-box button:hover {
-    background-color: #e84118;
-}
+.error-msg { color: #ff4757; font-size: 13px; margin-top: 15px; font-weight: bold; }
 
-.error-msg {
-    color: #ff4757 !important;
-    font-size: 13px !important;
-    margin-top: 15px !important;
-    margin-bottom: 0 !important;
-    font-weight: bold;
+/* Modal Configuration Dialog Architecture */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000;
 }
+.modal-overlay.show { opacity: 1; pointer-events: auto; }
+.modal-box { background-color: #1f1f1f; padding: 30px; border-radius: 10px; width: 90%; max-width: 400px; border: 1px solid #333; }
+.modal-box h3 { margin-top: 0; color: #ff4757; }
+.modal-box label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
+.modal-box input { width: 100%; padding: 10px; background-color: #2d2d2d; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 20px; box-sizing: border-box; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.modal-actions button { padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.cancel-btn { background-color: #333; color: white; }
+.save-btn { background-color: #2ed573; color: white; }
+
+/* Mobile Adaptations */
+@media (max-width: 768px) {
+    .layout-container { flex-direction: column; }
+    .sidebar { width: auto; border-right: none; border-bottom: 1px solid #333; padding: 15px; }
+    .sidebar ul { display: flex; overflow-x: auto; gap: 10px; }
+    .sidebar li { margin-bottom: 0; white-space: nowrap; padding: 8px 15px; }
+    header { flex-direction: column; text-align: center; }
 }

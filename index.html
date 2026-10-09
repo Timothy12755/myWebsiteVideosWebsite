@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Secure Video Dashboard</title>
+    <title>My Secure Multi-Media Vault</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <!-- SECURE GATE: Lock Screen -->
     <div id="lockScreen" class="lock-screen-overlay">
         <div class="lock-box">
-            <h2>🔒 Private Video Library</h2>
+            <h2>🔒 Private Media Library</h2>
             <p>Access Restricted. Please enter your approval PIN:</p>
             <input type="password" id="pinInput" placeholder="Enter PIN...">
             <button onclick="checkPin()">Unlock Dashboard</button>
@@ -22,64 +22,56 @@
     <!-- MAIN APP LAYOUT (Hidden by default until unlocked) -->
     <div id="mainApp" style="display: none;">
         <header>
-            <h1>My Personal Video Library</h1>
-            <input type="file" id="video-upload-input" accept="video/*" style="display: none;">
-            <!-- THE UPLOAD BUTTON IS BACK HERE -->
-            <button class="upload-btn" onclick="document.getElementById('video-upload-input').click()">
-                ➕ Upload Video
+            <h1>My Multi-Media Vault</h1>
+            <input type="file" id="media-upload-input" accept="video/*,image/*,.pdf,.doc,.docx,.txt" style="display: none;">
+            <button class="upload-btn" onclick="document.getElementById('media-upload-input').click()">
+                ➕ Upload File
             </button>
         </header>
 
         <div class="layout-container">
+            <!-- Sidebar Navigation Category System -->
             <aside class="sidebar">
-                <h3>Categories</h3>
-                <ul id="categoryMenu">
-                    <li class="category-item active" data-category="all">All Videos</li>
-                    <li class="category-item" data-category="tutorials">Tutorials</li>
-                    <li class="category-item" data-category="vlogs">Vlogs</li>
-                    <li class="category-item" data-category="gaming">Gaming</li>
-                    <li class="category-item" data-category="favorites">Favorites</li>
+                <h3>Filter Type</h3>
+                <ul id="typeMenu">
+                    <li class="type-item active" data-type="all">All Files</li>
+                    <li class="type-item" data-type="video">Videos 🎥</li>
+                    <li class="type-item" data-type="image">Images 🖼️</li>
+                    <li class="type-item" data-type="document">Documents 📄</li>
                 </ul>
             </aside>
 
+            <!-- Main Media Feed Grid Workspace -->
             <main class="content-area">
                 <div class="search-container">
-                    <input type="text" id="searchBar" placeholder="🔍 Search videos by title...">
+                    <input type="text" id="searchBar" placeholder="🔍 Search files by custom title...">
                 </div>
 
-                <h2 class="section-title" id="currentCategoryTitle">All Videos</h2>
+                <h2 class="section-title" id="currentFeedTitle">All Files</h2>
                 
-                <div class="video-grid" id="videoGrid">
-                    <!-- Cards load dynamically here via JS -->
+                <div class="media-grid" id="mediaGrid">
+                    <!-- Cards populate dynamically here from LocalStorage cache -->
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Upload Popup Modal Overlay -->
+    <!-- Configuration Pop-up Modal window setup -->
     <div class="modal-overlay" id="uploadModal">
         <div class="modal-box">
-            <h3>Configure Video Settings</h3>
-            <label for="modalTitle">Video Title</label>
-            <input type="text" id="modalTitle" placeholder="Enter video title...">
-            <label for="modalCategory">Assign Category</label>
-            <select id="modalCategory">
-                <option value="tutorials">Tutorials</option>
-                <option value="vlogs">Vlogs</option>
-                <option value="gaming">Gaming</option>
-                <option value="favorites">Favorites</option>
-            </select>
+            <h3>Configure Media Information</h3>
+            <label for="modalTitle">Custom Card Title</label>
+            <input type="text" id="modalTitle" placeholder="Enter title reference...">
             <div class="modal-actions">
                 <button class="cancel-btn" id="cancelBtn">Cancel</button>
-                <button class="save-btn" id="saveBtn">Add Video</button>
+                <button class="save-btn" id="saveBtn">Confirm Upload</button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Control Logic -->
+    <!-- JavaScript storage structure parsing, serialization, and filtering logic -->
     <script>
-        // 🔑 YOUR PASSWORD IS SET HERE. Enter 7777 to log in!
-        const CORRECT_PIN = "77777"; 
+        const CORRECT_PIN = "7777"; 
 
         function checkPin() {
             const userInput = document.getElementById('pinInput').value.trim();
@@ -90,48 +82,64 @@
             if (userInput === CORRECT_PIN) {
                 lockScreen.style.display = 'none';
                 mainApp.style.display = 'block';
-                loadSavedDashboard();
+                loadSavedMedia();
             } else {
                 errorMsg.textContent = "❌ Incorrect Approval PIN. Access Denied.";
                 document.getElementById('pinInput').value = '';
             }
         }
 
-        // Allow pressing the 'Enter' key to log in
         document.getElementById('pinInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPin();
         });
 
-        // --- DASHBOARD LOGIC ---
-        const fileInput = document.getElementById('video-upload-input');
-        const videoGrid = document.getElementById('videoGrid');
+        // --- VAULT DATA STORAGE MANAGEMENT ---
+        const fileInput = document.getElementById('media-upload-input');
+        const mediaGrid = document.getElementById('mediaGrid');
         const uploadModal = document.getElementById('uploadModal');
         const modalTitle = document.getElementById('modalTitle');
-        const modalCategory = document.getElementById('modalCategory');
         const cancelBtn = document.getElementById('cancelBtn');
         const saveBtn = document.getElementById('saveBtn');
-        const categoryItems = document.querySelectorAll('.category-item');
-        const currentCategoryTitle = document.getElementById('currentCategoryTitle');
+        const typeItems = document.querySelectorAll('.type-item');
+        const currentFeedTitle = document.getElementById('currentFeedTitle');
         const searchBar = document.getElementById('searchBar');
 
-        let savedVideosList = [];
+        let savedMediaList = [];
+        let pendingFileName = '';
+        let pendingFileType = '';
+        let pendingFileDataURL = '';
 
-        function loadSavedDashboard() {
-            const rawData = localStorage.getItem('myDashboardVideos');
+        function loadSavedMedia() {
+            const rawData = localStorage.getItem('mySecureMediaVault');
             if (rawData) {
-                savedVideosList = JSON.parse(rawData);
+                savedMediaList = JSON.parse(rawData);
             }
-            renderAllVideos();
+            renderAllMedia();
         }
 
         fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
-            if (file) {
-                // Generate a temporary browser playback URL for the chosen video file
-                pendingVideoURL = URL.createObjectURL(file); 
-                modalTitle.value = file.name.split('.').slice(0, -1).join('.');
-                uploadModal.classList.add('show');
+            if (!file) return;
+
+            pendingFileName = file.name;
+            
+            // Map file types to broad categories
+            if (file.type.startsWith('video/')) {
+                pendingFileType = 'video';
+            } else if (file.type.startsWith('image/')) {
+                pendingFileType = 'image';
+            } else {
+                pendingFileType = 'document';
             }
+
+            // Convert to a base64 string to lock data inside LocalStorage safely
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                pendingFileDataURL = e.target.result;
+                modalTitle.value = pendingFileName.split('.').slice(0, -1).join('.');
+                uploadModal.classList.add('show');
+            };
+            reader.readAsDataURL(file);
         });
 
         cancelBtn.addEventListener('click', function() {
@@ -140,66 +148,90 @@
         });
 
         saveBtn.addEventListener('click', function() {
-            const titleText = modalTitle.value.trim() || "Untitled Video";
-            const chosenCategory = modalCategory.value;
+            const titleText = modalTitle.value.trim() || "Untitled Item";
 
-            const newVideoObj = {
-                id: 'vid_' + Date.now(),
+            const newMediaObj = {
+                id: 'media_' + Date.now(),
                 title: titleText,
-                category: chosenCategory,
-                url: pendingVideoURL
+                type: pendingFileType,
+                fileName: pendingFileName,
+                dataUrl: pendingFileDataURL
             };
 
-            savedVideosList.unshift(newVideoObj);
-            saveToLocalStorage();
-            renderAllVideos();
-
-            uploadModal.classList.remove('show');
+            savedMediaList.unshift(newMediaObj);
+            
+            try {
+                saveToLocalStorage();
+                renderAllMedia();
+                uploadModal.classList.remove('show');
+            } catch (error) {
+                alert("🛑 Storage Limit Exceeded! Large files cannot fit in your browser's basic cache memory. Please clear out old uploads.");
+            }
+            
             fileInput.value = '';
         });
 
-        function renderAllVideos() {
-            videoGrid.innerHTML = '';
-            savedVideosList.forEach(video => {
-                const videoCard = document.createElement('div');
-                videoCard.className = 'video-card';
-                videoCard.setAttribute('data-category', video.category);
+        function renderAllMedia() {
+            mediaGrid.innerHTML = '';
+            
+            savedMediaList.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `media-card type-${item.type}`;
+                card.setAttribute('data-type', item.type);
                 
-                videoCard.innerHTML = `
-                    <button class="delete-btn" onclick="deleteVideo('${video.id}')">🗑️</button>
-                    <div class="video-wrapper">
-                        <video controls>
-                            <source src="${video.url}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                    <div class="video-info">
-                        <h3 class="video-title">${video.title}</h3>
-                        <p>Category: ${video.category.charAt(0).toUpperCase() + video.category.slice(1)}</p>
+                let previewElement = '';
+
+                // Generate specific visual containers depending on media format configurations
+                if (item.type === 'video') {
+                    previewElement = `
+                        <div class="media-wrapper">
+                            <video controls><source src="${item.dataUrl}"></video>
+                        </div>`;
+                } else if (item.type === 'image') {
+                    previewElement = `
+                        <div class="media-wrapper">
+                            <img src="${item.dataUrl}" alt="${item.title}" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;">
+                        </div>`;
+                } else {
+                    // Document presentation card layout
+                    previewElement = `
+                        <div class="media-wrapper doc-placeholder">
+                            <div class="doc-icon">📄</div>
+                            <span class="file-extension-tag">${item.fileName.split('.').pop().toUpperCase()}</span>
+                        </div>`;
+                }
+
+                card.innerHTML = `
+                    <button class="delete-btn" onclick="deleteMedia('${item.id}')">🗑️</button>
+                    ${previewElement}
+                    <div class="media-info">
+                        <h3 class="media-title">${item.title}</h3>
+                        <p class="file-name-meta">${item.fileName}</p>
+                        ${item.type === 'document' ? `<a href="${item.dataUrl}" download="${item.fileName}" class="download-link-btn">⬇️ Download File</a>` : ''}
                     </div>
                 `;
-                videoGrid.appendChild(videoCard);
+                mediaGrid.appendChild(card);
             });
             applyFilters();
         }
 
-        function deleteVideo(videoId) {
-            if(confirm("Are you sure you want to remove this video card?")) {
-                savedVideosList = savedVideosList.filter(item => item.id !== videoId);
+        function deleteMedia(id) {
+            if (confirm("Are you sure you want to permanently delete this file?")) {
+                savedMediaList = savedMediaList.filter(item => item.id !== id);
                 saveToLocalStorage();
-                renderAllVideos();
+                renderAllMedia();
             }
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('myDashboardVideos', JSON.stringify(savedVideosList));
+            localStorage.setItem('mySecureMediaVault', JSON.stringify(savedMediaList));
         }
 
-        categoryItems.forEach(item => {
+        typeItems.forEach(item => {
             item.addEventListener('click', function() {
-                categoryItems.forEach(i => i.classList.remove('active'));
+                typeItems.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
-                currentCategoryTitle.textContent = this.textContent;
+                currentFeedTitle.textContent = this.textContent;
                 applyFilters();
             });
         });
@@ -207,24 +239,4 @@
         searchBar.addEventListener('input', applyFilters);
 
         function applyFilters() {
-            const activeCategory = document.querySelector('.category-item.active').getAttribute('data-category');
-            const searchQuery = searchBar.value.toLowerCase().trim();
-            const cards = videoGrid.querySelectorAll('.video-card');
-
-            cards.forEach(card => {
-                const cardCategory = card.getAttribute('data-category');
-                const cardTitle = card.querySelector('.video-title').textContent.toLowerCase();
-
-                const matchesCategory = (activeCategory === 'all' || cardCategory === activeCategory);
-                const matchesSearch = cardTitle.includes(searchQuery);
-
-                if (matchesCategory && matchesSearch) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+            const activeType = document.querySelector('.type-item.active').getAttribute('data-type');
