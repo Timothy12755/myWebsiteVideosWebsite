@@ -1,4 +1,4 @@
-/* Base Layout Structure Elements */
+/* Base Global Dashboard Layout Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -13,38 +13,19 @@ body {
 
 header {
     background-color: #1f1f1f;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 20px;
+    text-align: center;
     border-bottom: 2px solid #333;
-    flex-wrap: wrap;
-    gap: 15px;
 }
 
 header h1 {
-    margin: 0;
-    font-size: 22px;
+    margin: 0 0 5px 0;
+    font-size: 24px;
     color: #ff4757;
 }
 
-.upload-btn {
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-.upload-btn:hover { background-color: #e84118; }
-.upload-btn:active { transform: scale(0.95); }
-
 .search-container {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     width: 100%;
 }
 
@@ -66,7 +47,7 @@ header h1 {
     display: flex;
     max-width: 1400px;
     margin: 0 auto;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 90px);
 }
 
 .sidebar {
@@ -113,89 +94,41 @@ header h1 {
 
 .media-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
 }
 
-/* Card Block Architectures */
+/* Video Card Elements */
 .media-card {
-    position: relative;
     background-color: #1f1f1f;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     height: fit-content;
-    border-top: 4px solid #333;
+    border-top: 4px solid #ff4757;
 }
-
-.media-card.type-video { border-top-color: #ff4757; }
-.media-card.type-image { border-top-color: #2ed573; }
-.media-card.type-document { border-top-color: #1e90ff; }
-
-.delete-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 10;
-    background-color: rgba(255, 71, 87, 0.9);
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-.delete-btn:hover { background-color: #ff4757; transform: scale(1.1); }
 
 .media-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; 
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
     background-color: #000;
 }
 
-.media-wrapper video, .media-wrapper img {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border: none;
-}
-
-.doc-placeholder {
-    background-color: #1e272e;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-}
-
-.doc-icon { font-size: 40px; margin-bottom: 2px; }
-.file-extension-tag {
-    background-color: #1e90ff;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: bold;
-    border-radius: 4px;
-    text-transform: uppercase;
+.media-wrapper video, .media-wrapper iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
 }
 
 .media-info { padding: 15px; }
 .media-info h3 {
-    margin: 0 0 5px 0; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin: 0 0 5px 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.file-name-meta {
-    margin: 0 0 10px 0; font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.media-info p {
+    margin: 0; font-size: 13px; color: #aaa;
 }
 
-.download-link-btn {
-    display: inline-block; width: 100%; text-align: center; background-color: #2f3640;
-    color: white; text-decoration: none; padding: 8px 0; font-size: 13px; border-radius: 4px; font-weight: bold;
-}
-.download-link-btn:hover { background-color: #3d3d3d; }
-
-/* Security Overlay Screen Elements */
+/* Security Gate Lock Box Styles */
 .lock-screen-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;
@@ -205,30 +138,20 @@ header h1 {
     background-color: #1f1f1f; padding: 40px; border-radius: 12px; text-align: center; max-width: 360px; width: 85%; border: 1px solid #333;
 }
 
-.lock-box h2 { margin-top: 0; color: #ff4757; }
+.lock-box h2 { margin-top: 0; color: #ff4757; font-size: 24px; }
+.lock-box p { color: #aaa; font-size: 14px; margin-bottom: 20px; }
+
 .lock-box input[type="password"] {
-    width: 100%; padding: 12px; background-color: #2d2d2d; border: 1px solid #444; color: white; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 16px;
+    width: 100%; padding: 12px; background-color: #2d2d2d; border: 1px solid #444; color: white; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 16px; letter-spacing: 3px;
 }
+.lock-box input[type="password"]:focus { outline: none; border-color: #ff4757; }
 
 .lock-box button {
-    width: 100%; background-color: #ff4757; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer;
+    width: 100%; background-color: #ff4757; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; transition: background 0.2s;
 }
+.lock-box button:hover { background-color: #e84118; }
 
 .error-msg { color: #ff4757; font-size: 13px; margin-top: 15px; font-weight: bold; }
-
-/* Modal Configuration Windows */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000;
-}
-.modal-overlay.show { opacity: 1; pointer-events: auto; }
-.modal-box { background-color: #1f1f1f; padding: 30px; border-radius: 10px; width: 90%; max-width: 400px; border: 1px solid #333; }
-.modal-box h3 { margin-top: 0; color: #ff4757; }
-.modal-box label { display: block; font-size: 13px; color: #aaa; margin-bottom: 5px; }
-.modal-box input { width: 100%; padding: 10px; background-color: #2d2d2d; border: 1px solid #444; color: white; border-radius: 5px; margin-bottom: 20px; box-sizing: border-box; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-.modal-actions button { padding: 10px 18px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-.cancel-btn { background-color: #333; color: white; }
-.save-btn { background-color: #2ed573; color: white; }
 
 /* Mobile Aspect Responsiveness Changes */
 @media (max-width: 768px) {
@@ -236,5 +159,4 @@ header h1 {
     .sidebar { width: auto; border-right: none; border-bottom: 1px solid #333; padding: 15px; }
     .sidebar ul { display: flex; overflow-x: auto; gap: 10px; }
     .sidebar li { margin-bottom: 0; white-space: nowrap; padding: 8px 15px; }
-    header { flex-direction: column; text-align: center; }
 }
