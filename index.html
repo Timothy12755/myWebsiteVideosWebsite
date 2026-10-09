@@ -71,8 +71,10 @@
 
     <!-- JavaScript storage structure parsing, serialization, and filtering logic -->
     <script>
+        // 🔑 CONSTANT ACCESS PIN: Type exactly 7777 to pass the secure lock screen
         const CORRECT_PIN = "7777"; 
 
+        // Password Verification Logic Block
         function checkPin() {
             const userInput = document.getElementById('pinInput').value.trim();
             const lockScreen = document.getElementById('lockScreen');
@@ -80,8 +82,11 @@
             const errorMsg = document.getElementById('errorMessage');
 
             if (userInput === CORRECT_PIN) {
+                // Instantly remove password barrier visual element layers
                 lockScreen.style.display = 'none';
                 mainApp.style.display = 'block';
+                
+                // Fire data cache pipeline
                 loadSavedMedia();
             } else {
                 errorMsg.textContent = "❌ Incorrect Approval PIN. Access Denied.";
@@ -89,8 +94,11 @@
             }
         }
 
+        // Listen for keyboard 'Enter' keystrokes inside the login input field
         document.getElementById('pinInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPin();
+            if (e.key === 'Enter') {
+                checkPin();
+            }
         });
 
         // --- VAULT DATA STORAGE MANAGEMENT ---
@@ -113,6 +121,8 @@
             const rawData = localStorage.getItem('mySecureMediaVault');
             if (rawData) {
                 savedMediaList = JSON.parse(rawData);
+            } else {
+                savedMediaList = []; // Fallback initializing standard configuration arrays
             }
             renderAllMedia();
         }
@@ -123,7 +133,7 @@
 
             pendingFileName = file.name;
             
-            // Map file types to broad categories
+            // Map raw browser metadata formats to matching style categories
             if (file.type.startsWith('video/')) {
                 pendingFileType = 'video';
             } else if (file.type.startsWith('image/')) {
@@ -132,7 +142,7 @@
                 pendingFileType = 'document';
             }
 
-            // Convert to a base64 string to lock data inside LocalStorage safely
+            // Convert raw buffer streams into a string base64 cache blob element block
             const reader = new FileReader();
             reader.onload = function(e) {
                 pendingFileDataURL = e.target.result;
@@ -161,7 +171,7 @@
             savedMediaList.unshift(newMediaObj);
             
             try {
-                saveToLocalStorage();
+                localStorage.setItem('mySecureMediaVault', JSON.stringify(savedMediaList));
                 renderAllMedia();
                 uploadModal.classList.remove('show');
             } catch (error) {
@@ -174,6 +184,11 @@
         function renderAllMedia() {
             mediaGrid.innerHTML = '';
             
+            if (savedMediaList.length === 0) {
+                mediaGrid.innerHTML = '<p style="color: #666; grid-column: 1/-1; text-align: center; margin-top: 40px;">No files uploaded yet. Click "➕ Upload File" to add items.</p>';
+                return;
+            }
+
             savedMediaList.forEach(item => {
                 const card = document.createElement('div');
                 card.className = `media-card type-${item.type}`;
@@ -181,7 +196,6 @@
                 
                 let previewElement = '';
 
-                // Generate specific visual containers depending on media format configurations
                 if (item.type === 'video') {
                     previewElement = `
                         <div class="media-wrapper">
@@ -193,7 +207,6 @@
                             <img src="${item.dataUrl}" alt="${item.title}" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;">
                         </div>`;
                 } else {
-                    // Document presentation card layout
                     previewElement = `
                         <div class="media-wrapper doc-placeholder">
                             <div class="doc-icon">📄</div>
@@ -218,25 +231,4 @@
         function deleteMedia(id) {
             if (confirm("Are you sure you want to permanently delete this file?")) {
                 savedMediaList = savedMediaList.filter(item => item.id !== id);
-                saveToLocalStorage();
-                renderAllMedia();
-            }
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('mySecureMediaVault', JSON.stringify(savedMediaList));
-        }
-
-        typeItems.forEach(item => {
-            item.addEventListener('click', function() {
-                typeItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                currentFeedTitle.textContent = this.textContent;
-                applyFilters();
-            });
-        });
-
-        searchBar.addEventListener('input', applyFilters);
-
-        function applyFilters() {
-            const activeType = document.querySelector('.type-item.active').getAttribute('data-type');
+                localStorage.setItem('mySecureMediaVault', JSON.stringify(savedMediaList));
