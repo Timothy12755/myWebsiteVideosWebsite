@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Secure Video Dashboard</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <!-- SECURE GATE: Lock Screen -->
+    <div id="lockScreen" class="lock-screen-overlay">
+        <div class="lock-box">
+            <h2>🔒 Private Video Library</h2>
+            <p>Access Restricted. Please enter your approval PIN:</p>
+            <input type="password" id="pinInput" placeholder="Enter PIN...">
+            <button onclick="checkPin()">Unlock Dashboard</button>
+            <p id="errorMessage" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- MAIN APP LAYOUT (Hidden by default until unlocked) -->
+    <div id="mainApp" style="display: none;">
+        <header>
+            <h1>My Personal Video Library</h1>
+            <input type="file" id="video-upload-input" accept="video/*" style="display: none;">
+            <!-- THE UPLOAD BUTTON IS BACK HERE -->
+            <button class="upload-btn" onclick="document.getElementById('video-upload-input').click()">
+                ➕ Upload Video
+            </button>
+        </header>
+
+        <div class="layout-container">
+            <aside class="sidebar">
+                <h3>Categories</h3>
+                <ul id="categoryMenu">
+                    <li class="category-item active" data-category="all">All Videos</li>
+                    <li class="category-item" data-category="tutorials">Tutorials</li>
+                    <li class="category-item" data-category="vlogs">Vlogs</li>
+                    <li class="category-item" data-category="gaming">Gaming</li>
+                    <li class="category-item" data-category="favorites">Favorites</li>
+                </ul>
+            </aside>
+
+            <main class="content-area">
+                <div class="search-container">
+                    <input type="text" id="searchBar" placeholder="🔍 Search videos by title...">
+                </div>
+
+                <h2 class="section-title" id="currentCategoryTitle">All Videos</h2>
+                
+                <div class="video-grid" id="videoGrid">
+                    <!-- Cards load dynamically here via JS -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Upload Popup Modal Overlay -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-box">
+            <h3>Configure Video Settings</h3>
+            <label for="modalTitle">Video Title</label>
+            <input type="text" id="modalTitle" placeholder="Enter video title...">
+            <label for="modalCategory">Assign Category</label>
+            <select id="modalCategory">
+                <option value="tutorials">Tutorials</option>
+                <option value="vlogs">Vlogs</option>
+                <option value="gaming">Gaming</option>
+                <option value="favorites">Favorites</option>
+            </select>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelBtn">Cancel</button>
+                <button class="save-btn" id="saveBtn">Add Video</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Control Logic -->
+    <script>
+        // 🔑 YOUR PASSWORD IS SET HERE. Enter 7777 to log in!
+        const CORRECT_PIN = "7777"; 
+
+        function checkPin() {
+            const userInput = document.getElementById('pinInput').value.trim();
+            const lockScreen = document.getElementById('lockScreen');
+            const mainApp = document.getElementById('mainApp');
+            const errorMsg = document.getElementById('errorMessage');
+
+            if (userInput === CORRECT_PIN) {
+                lockScreen.style.display = 'none';
+                mainApp.style.display = 'block';
+                loadSavedDashboard();
+            } else {
+                errorMsg.textContent = "❌ Incorrect Approval PIN. Access Denied.";
+                document.getElementById('pinInput').value = '';
+            }
+        }
+
+        // Allow pressing the 'Enter' key to log in
+        document.getElementById('pinInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPin();
+        });
+
+        // --- DASHBOARD LOGIC ---
+        const fileInput = document.getElementById('video-upload-input');
+        const videoGrid = document.getElementById('videoGrid');
+        const uploadModal = document.getElementById('uploadModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCategory = document.getElementById('modalCategory');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const categoryItems = document.querySelectorAll('.category-item');
+        const currentCategoryTitle = document.getElementById('currentCategoryTitle');
+        const searchBar = document.getElementById('searchBar');
+
+        let savedVideosList = [];
+
+        function loadSavedDashboard() {
+            const rawData = localStorage.getItem('myDashboardVideos');
+            if (rawData) {
+                savedVideosList = JSON.parse(rawData);
+            }
+            renderAllVideos();
+        }
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Generate a temporary browser playback URL for the chosen video file
+                pendingVideoURL = URL.createObjectURL(file); 
+                modalTitle.value = file.name.split('.').slice(0, -1).join('.');
+                uploadModal.classList.add('show');
+            }
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            uploadModal.classList.remove('show');
+            fileInput.value = '';
+        });
+
+        saveBtn.addEventListener('click', function() {
+            const titleText = modalTitle.value.trim() || "Untitled Video";
+            const chosenCategory = modalCategory.value;
+
+            const newVideoObj = {
+                id: 'vid_' + Date.now(),
+                title: titleText,
+                category: chosenCategory,
+                url: pendingVideoURL
+            };
+
+            savedVideosList.unshift(newVideoObj);
+            saveToLocalStorage();
+            renderAllVideos();
+
+            uploadModal.classList.remove('show');
+            fileInput.value = '';
+        });
+
+        function renderAllVideos() {
+            videoGrid.innerHTML = '';
+            savedVideosList.forEach(video => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.setAttribute('data-category', video.category);
+                
+                videoCard.innerHTML = `
+                    <button class="delete-btn" onclick="deleteVideo('${video.id}')">🗑️</button>
+                    <div class="video-wrapper">
+                        <video controls>
+                            <source src="${video.url}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">${video.title}</h3>
+                        <p>Category: ${video.category.charAt(0).toUpperCase() + video.category.slice(1)}</p>
+                    </div>
+                `;
+                videoGrid.appendChild(videoCard);
+            });
+            applyFilters();
+        }
+
+        function deleteVideo(videoId) {
+            if(confirm("Are you sure you want to remove this video card?")) {
+                savedVideosList = savedVideosList.filter(item => item.id !== videoId);
+                saveToLocalStorage();
+                renderAllVideos();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('myDashboardVideos', JSON.stringify(savedVideosList));
+        }
+
+        categoryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                categoryItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                currentCategoryTitle.textContent = this.textContent;
+                applyFilters();
+            });
+        });
+
+        searchBar.addEventListener('input', applyFilters);
+
+        function applyFilters() {
+            const activeCategory = document.querySelector('.category-item.active').getAttribute('data-category');
+            const searchQuery = searchBar.value.toLowerCase().trim();
+            const cards = videoGrid.querySelectorAll('.video-card');
+
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                const cardTitle = card.querySelector('.video-title').textContent.toLowerCase();
+
+                const matchesCategory = (activeCategory === 'all' || cardCategory === activeCategory);
+                const matchesSearch = cardTitle.includes(searchQuery);
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
