@@ -1,10 +1,14 @@
-/* Base Layout Configurations */
+/* Base Layout Structure Elements */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #121212;
     color: #ffffff;
+}
+
+.hidden-app-wrapper {
+    display: none !important;
 }
 
 header {
@@ -124,7 +128,6 @@ header h1 {
     border-top: 4px solid #333;
 }
 
-/* Color code individual formats dynamically */
 .media-card.type-video { border-top-color: #ff4757; }
 .media-card.type-image { border-top-color: #2ed573; }
 .media-card.type-document { border-top-color: #1e90ff; }
@@ -154,11 +157,10 @@ header h1 {
     background-color: #000;
 }
 
-.media-wrapper video {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
+.media-wrapper video, .media-wrapper img {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border: none;
 }
 
-/* Styled document asset wrapper elements */
 .doc-placeholder {
     background-color: #1e272e;
     display: flex;
@@ -193,7 +195,7 @@ header h1 {
 }
 .download-link-btn:hover { background-color: #3d3d3d; }
 
-/* Security Overlay Styles */
+/* Security Overlay Screen Elements */
 .lock-screen-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;
@@ -214,7 +216,7 @@ header h1 {
 
 .error-msg { color: #ff4757; font-size: 13px; margin-top: 15px; font-weight: bold; }
 
-/* Modal Configuration Dialog Architecture */
+/* Modal Configuration Windows */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000;
 }
@@ -228,7 +230,7 @@ header h1 {
 .cancel-btn { background-color: #333; color: white; }
 .save-btn { background-color: #2ed573; color: white; }
 
-/* Mobile Adaptations */
+/* Mobile Aspect Responsiveness Changes */
 @media (max-width: 768px) {
     .layout-container { flex-direction: column; }
     .sidebar { width: auto; border-right: none; border-bottom: 1px solid #333; padding: 15px; }

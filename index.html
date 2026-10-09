@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Secure Multi-Media Vault</title>
+    <title>My Private Media Vault</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-    <!-- SECURE GATE: Lock Screen -->
+    <!-- SECURE GATE: Main Lock Screen View Cover -->
     <div id="lockScreen" class="lock-screen-overlay">
         <div class="lock-box">
             <h2>🔒 Private Media Library</h2>
             <p>Access Restricted. Please enter your approval PIN:</p>
-            <input type="password" id="pinInput" placeholder="Enter PIN...">
-            <button onclick="checkPin()">Unlock Dashboard</button>
+            <input type="password" id="pinInput" placeholder="Enter PIN..." autofocus>
+            <button id="unlockBtn">Unlock Dashboard</button>
             <p id="errorMessage" class="error-msg"></p>
         </div>
     </div>
 
-    <!-- MAIN APP LAYOUT (Hidden by default until unlocked) -->
-    <div id="mainApp" style="display: none;">
+    <!-- MAIN APP LAYOUT (Completely hidden structurally until the PIN verification passes) -->
+    <div id="mainApp" class="hidden-app-wrapper">
         <header>
             <h1>My Multi-Media Vault</h1>
             <input type="file" id="media-upload-input" accept="video/*,image/*,.pdf,.doc,.docx,.txt" style="display: none;">
-            <button class="upload-btn" onclick="document.getElementById('media-upload-input').click()">
+            <button class="upload-btn" id="triggerUploadBtn">
                 ➕ Upload File
             </button>
         </header>
 
         <div class="layout-container">
-            <!-- Sidebar Navigation Category System -->
+            <!-- Sidebar Format Filter Navigation Area -->
             <aside class="sidebar">
                 <h3>Filter Type</h3>
                 <ul id="typeMenu">
@@ -41,7 +41,7 @@
                 </ul>
             </aside>
 
-            <!-- Main Media Feed Grid Workspace -->
+            <!-- Main Interactive Feed Workspace -->
             <main class="content-area">
                 <div class="search-container">
                     <input type="text" id="searchBar" placeholder="🔍 Search files by custom title...">
@@ -50,18 +50,18 @@
                 <h2 class="section-title" id="currentFeedTitle">All Files</h2>
                 
                 <div class="media-grid" id="mediaGrid">
-                    <!-- Cards populate dynamically here from LocalStorage cache -->
+                    <!-- Dynamic client rendering cards insert here -->
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Configuration Pop-up Modal window setup -->
+    <!-- Configuration Dialog Overlay -->
     <div class="modal-overlay" id="uploadModal">
         <div class="modal-box">
             <h3>Configure Media Information</h3>
             <label for="modalTitle">Custom Card Title</label>
-            <input type="text" id="modalTitle" placeholder="Enter title reference...">
+            <input type="text" id="modalTitle" placeholder="Enter file name display title...">
             <div class="modal-actions">
                 <button class="cancel-btn" id="cancelBtn">Cancel</button>
                 <button class="save-btn" id="saveBtn">Confirm Upload</button>
@@ -69,166 +69,151 @@
         </div>
     </div>
 
-    <!-- JavaScript storage structure parsing, serialization, and filtering logic -->
+    <!-- Isolated Clean-Pipeline JavaScript Engine -->
     <script>
-        // 🔑 CONSTANT ACCESS PIN: Type exactly 7777 to pass the secure lock screen
         const CORRECT_PIN = "7777"; 
 
-        // Password Verification Logic Block
-        function checkPin() {
-            const userInput = document.getElementById('pinInput').value.trim();
-            const lockScreen = document.getElementById('lockScreen');
-            const mainApp = document.getElementById('mainApp');
-            const errorMsg = document.getElementById('errorMessage');
+        const lockScreen = document.getElementById('lockScreen');
+        const mainApp = document.getElementById('mainApp');
+        const pinInput = document.getElementById('pinInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const errorMsg = document.getElementById('errorMessage');
 
-            if (userInput === CORRECT_PIN) {
-                // Instantly remove password barrier visual element layers
-                lockScreen.style.display = 'none';
-                mainApp.style.display = 'block';
+        // Clean event handling logic to pass the lockscreen barrier
+        function verifyAndUnlock() {
+            const enteredValue = pinInput.value.trim();
+
+            if (enteredValue === CORRECT_PIN) {
+                // Remove the login gate screen entirely and activate hidden layout containers
+                lockScreen.style.setProperty('display', 'none', 'important');
+                mainApp.classList.remove('hidden-app-wrapper');
                 
-                // Fire data cache pipeline
-                loadSavedMedia();
+                // Fire internal local memory layout streams
+                initializeVaultWorkspace();
             } else {
                 errorMsg.textContent = "❌ Incorrect Approval PIN. Access Denied.";
-                document.getElementById('pinInput').value = '';
+                pinInput.value = '';
+                pinInput.focus();
             }
         }
 
-        // Listen for keyboard 'Enter' keystrokes inside the login input field
-        document.getElementById('pinInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPin();
-            }
+        unlockBtn.addEventListener('click', verifyAndUnlock);
+        pinInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') verifyAndUnlock();
         });
 
-        // --- VAULT DATA STORAGE MANAGEMENT ---
-        const fileInput = document.getElementById('media-upload-input');
-        const mediaGrid = document.getElementById('mediaGrid');
-        const uploadModal = document.getElementById('uploadModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const cancelBtn = document.getElementById('cancelBtn');
-        const saveBtn = document.getElementById('saveBtn');
-        const typeItems = document.querySelectorAll('.type-item');
-        const currentFeedTitle = document.getElementById('currentFeedTitle');
-        const searchBar = document.getElementById('searchBar');
+        // --- ENCAPSULATED SEPARATED INTERFACE WORKSPACE ENGINE ---
+        function initializeVaultWorkspace() {
+            const triggerUploadBtn = document.getElementById('triggerUploadBtn');
+            const fileInput = document.getElementById('media-upload-input');
+            const mediaGrid = document.getElementById('mediaGrid');
+            const uploadModal = document.getElementById('uploadModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const typeItems = document.querySelectorAll('.type-item');
+            const currentFeedTitle = document.getElementById('currentFeedTitle');
+            const searchBar = document.getElementById('searchBar');
 
-        let savedMediaList = [];
-        let pendingFileName = '';
-        let pendingFileType = '';
-        let pendingFileDataURL = '';
+            let vaultItemsDatabase = [];
 
-        function loadSavedMedia() {
-            const rawData = localStorage.getItem('mySecureMediaVault');
-            if (rawData) {
-                savedMediaList = JSON.parse(rawData);
-            } else {
-                savedMediaList = []; // Fallback initializing standard configuration arrays
-            }
-            renderAllMedia();
-        }
+            // Open OS File Explorer dialog view box
+            triggerUploadBtn.addEventListener('click', () => fileInput.click());
 
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            pendingFileName = file.name;
-            
-            // Map raw browser metadata formats to matching style categories
-            if (file.type.startsWith('video/')) {
-                pendingFileType = 'video';
-            } else if (file.type.startsWith('image/')) {
-                pendingFileType = 'image';
-            } else {
-                pendingFileType = 'document';
+            function syncCacheAndRefresh() {
+                const storedData = localStorage.getItem('mySecureMediaVault');
+                vaultItemsDatabase = storedData ? JSON.parse(storedData) : [];
+                drawInterfaceCards();
             }
 
-            // Convert raw buffer streams into a string base64 cache blob element block
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                pendingFileDataURL = e.target.result;
-                modalTitle.value = pendingFileName.split('.').slice(0, -1).join('.');
-                uploadModal.classList.add('show');
-            };
-            reader.readAsDataURL(file);
-        });
+            let fileMetaCache = { name: '', type: '', dataBlob: '' };
 
-        cancelBtn.addEventListener('click', function() {
-            uploadModal.classList.remove('show');
-            fileInput.value = '';
-        });
+            fileInput.addEventListener('change', function(event) {
+                const targetedFile = event.target.files[0];
+                if (!targetedFile) return;
 
-        saveBtn.addEventListener('click', function() {
-            const titleText = modalTitle.value.trim() || "Untitled Item";
-
-            const newMediaObj = {
-                id: 'media_' + Date.now(),
-                title: titleText,
-                type: pendingFileType,
-                fileName: pendingFileName,
-                dataUrl: pendingFileDataURL
-            };
-
-            savedMediaList.unshift(newMediaObj);
-            
-            try {
-                localStorage.setItem('mySecureMediaVault', JSON.stringify(savedMediaList));
-                renderAllMedia();
-                uploadModal.classList.remove('show');
-            } catch (error) {
-                alert("🛑 Storage Limit Exceeded! Large files cannot fit in your browser's basic cache memory. Please clear out old uploads.");
-            }
-            
-            fileInput.value = '';
-        });
-
-        function renderAllMedia() {
-            mediaGrid.innerHTML = '';
-            
-            if (savedMediaList.length === 0) {
-                mediaGrid.innerHTML = '<p style="color: #666; grid-column: 1/-1; text-align: center; margin-top: 40px;">No files uploaded yet. Click "➕ Upload File" to add items.</p>';
-                return;
-            }
-
-            savedMediaList.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `media-card type-${item.type}`;
-                card.setAttribute('data-type', item.type);
+                fileMetaCache.name = targetedFile.name;
                 
-                let previewElement = '';
-
-                if (item.type === 'video') {
-                    previewElement = `
-                        <div class="media-wrapper">
-                            <video controls><source src="${item.dataUrl}"></video>
-                        </div>`;
-                } else if (item.type === 'image') {
-                    previewElement = `
-                        <div class="media-wrapper">
-                            <img src="${item.dataUrl}" alt="${item.title}" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;">
-                        </div>`;
+                if (targetedFile.type.startsWith('video/')) {
+                    fileMetaCache.type = 'video';
+                } else if (targetedFile.type.startsWith('image/')) {
+                    fileMetaCache.type = 'image';
                 } else {
-                    previewElement = `
-                        <div class="media-wrapper doc-placeholder">
-                            <div class="doc-icon">📄</div>
-                            <span class="file-extension-tag">${item.fileName.split('.').pop().toUpperCase()}</span>
-                        </div>`;
+                    fileMetaCache.type = 'document';
                 }
 
-                card.innerHTML = `
-                    <button class="delete-btn" onclick="deleteMedia('${item.id}')">🗑️</button>
-                    ${previewElement}
-                    <div class="media-info">
-                        <h3 class="media-title">${item.title}</h3>
-                        <p class="file-name-meta">${item.fileName}</p>
-                        ${item.type === 'document' ? `<a href="${item.dataUrl}" download="${item.fileName}" class="download-link-btn">⬇️ Download File</a>` : ''}
-                    </div>
-                `;
-                mediaGrid.appendChild(card);
+                const readerEngine = new FileReader();
+                readerEngine.onload = function(e) {
+                    fileMetaCache.dataBlob = e.target.result;
+                    modalTitle.value = fileMetaCache.name.split('.').slice(0, -1).join('.');
+                    uploadModal.classList.add('show');
+                };
+                readerEngine.readAsDataURL(targetedFile);
             });
-            applyFilters();
-        }
 
-        function deleteMedia(id) {
-            if (confirm("Are you sure you want to permanently delete this file?")) {
-                savedMediaList = savedMediaList.filter(item => item.id !== id);
-                localStorage.setItem('mySecureMediaVault', JSON.stringify(savedMediaList));
+            cancelBtn.addEventListener('click', () => {
+                uploadModal.classList.remove('show');
+                fileInput.value = '';
+            });
+
+            saveBtn.addEventListener('click', () => {
+                const finalTitleText = modalTitle.value.trim() || "Untitled Vault File";
+
+                const newRecord = {
+                    uniqueId: 'item_' + Date.now(),
+                    title: finalTitleText,
+                    formatType: fileMetaCache.type,
+                    originalFileName: fileMetaCache.name,
+                    base64Data: fileMetaCache.dataBlob
+                };
+
+                vaultItemsDatabase.unshift(newRecord);
+
+                try {
+                    localStorage.setItem('mySecureMediaVault', JSON.stringify(vaultItemsDatabase));
+                    drawInterfaceCards();
+                    uploadModal.classList.remove('show');
+                } catch (storageError) {
+                    alert("🛑 Upload Error: This file is too large to fit into your web browser's offline LocalStorage allocation space.");
+                }
+
+                fileInput.value = '';
+            });
+
+            function drawInterfaceCards() {
+                mediaGrid.innerHTML = '';
+
+                if (vaultItemsDatabase.length === 0) {
+                    mediaGrid.innerHTML = '<p style="color:#555; grid-column:1/-1; text-align:center; margin-top:40px; font-style:italic;">Vault feed empty. Click "➕ Upload File" above to add item records.</p>';
+                    return;
+                }
+
+                vaultItemsDatabase.forEach(item => {
+                    const cardBlock = document.createElement('div');
+                    cardBlock.className = `media-card type-${item.formatType}`;
+                    cardBlock.setAttribute('data-type', item.formatType);
+
+                    let payloadHTML = '';
+                    if (item.formatType === 'video') {
+                        payloadHTML = `<div class="media-wrapper"><video controls src="${item.base64Data}"></video></div>`;
+                    } else if (item.formatType === 'image') {
+                        payloadHTML = `<div class="media-wrapper"><img src="${item.base64Data}" alt="vault item"></div>`;
+                    } else {
+                        payloadHTML = `
+                            <div class="media-wrapper doc-placeholder">
+                                <div class="doc-icon">📄</div>
+                                <span class="file-extension-tag">${item.originalFileName.split('.').pop().toUpperCase()}</span>
+                            </div>`;
+                    }
+
+                    cardBlock.innerHTML = `
+                        <button class="delete-btn" data-target-id="${item.uniqueId}">🗑️</button>
+                        ${payloadHTML}
+                        <div class="media-info">
+                            <h3 class="media-title">${item.title}</h3>
+                            <p class="file-name-meta">${item.originalFileName}</p>
+                            ${item.formatType === 'document' ? `<a href="${item.base64Data}" download="${item.originalFileName}" class="download-link-btn">⬇️ Download File</a>` : ''}
+                        </div>
+                    `;
+
+                    // Bind delete listener triggers directly onto card structural output run loops
