@@ -1,4 +1,4 @@
-/* Base Page Styles */
+/* Base Global Dashboard Layout Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -7,48 +7,25 @@ body {
     color: #ffffff;
 }
 
-/* Header Styles */
+.hidden-app-wrapper {
+    display: none !important;
+}
+
 header {
     background-color: #1f1f1f;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 20px;
+    text-align: center;
     border-bottom: 2px solid #333;
-    flex-wrap: wrap;
-    gap: 15px;
 }
 
 header h1 {
-    margin: 0;
-    font-size: 22px;
+    margin: 0 0 5px 0;
+    font-size: 24px;
     color: #ff4757;
 }
 
-/* Styled Upload Button */
-.upload-btn {
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-.upload-btn:hover {
-    background-color: #e84118;
-}
-
-.upload-btn:active {
-    transform: scale(0.95);
-}
-
-/* Search Bar Wrapper Styling */
 .search-container {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     width: 100%;
 }
 
@@ -64,20 +41,15 @@ header h1 {
     box-sizing: border-box;
 }
 
-#searchBar:focus {
-    outline: none;
-    border-color: #ff4757;
-}
+#searchBar:focus { outline: none; border-color: #ff4757; }
 
-/* App Layout Structure */
 .layout-container {
     display: flex;
     max-width: 1400px;
     margin: 0 auto;
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 90px);
 }
 
-/* Sidebar Navigation Layout */
 .sidebar {
     width: 240px;
     background-color: #1a1a1a;
@@ -93,11 +65,7 @@ header h1 {
     letter-spacing: 1px;
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
 
 .sidebar li {
     padding: 12px 15px;
@@ -108,18 +76,9 @@ header h1 {
     transition: background 0.2s;
 }
 
-.sidebar li:hover {
-    background-color: #2a2a2a;
-    color: #fff;
-}
+.sidebar li:hover { background-color: #2a2a2a; color: #fff; }
+.sidebar li.active { background-color: #ff4757; color: #fff; font-weight: bold; }
 
-.sidebar li.active {
-    background-color: #ff4757;
-    color: #fff;
-    font-weight: bold;
-}
-
-/* Video Grid Workspace */
 .content-area {
     flex: 1;
     padding: 25px;
@@ -133,285 +92,71 @@ header h1 {
     padding-left: 10px;
 }
 
-.video-grid {
+.media-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
 }
 
-/* Card Block Containers */
-.video-card {
-    position: relative;
+/* Video Card Elements */
+.media-card {
     background-color: #1f1f1f;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     height: fit-content;
+    border-top: 4px solid #ff4757;
 }
 
-/* Card Delete Control Pin button styling */
-.delete-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 10;
-    background-color: rgba(255, 71, 87, 0.9);
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s, transform 0.1s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.delete-btn:hover {
-    background-color: #ff4757;
-    transform: scale(1.1);
-}
-
-.video-wrapper {
+.media-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; 
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
     background-color: #000;
 }
 
-.video-wrapper video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
+.media-wrapper video, .media-wrapper iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
 }
 
-.video-info {
-    padding: 15px;
+.media-info { padding: 15px; }
+.media-info h3 {
+    margin: 0 0 5px 0; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.video-info h3 {
-    margin: 0 0 8px 0;
-    font-size: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.media-info p {
+    margin: 0; font-size: 13px; color: #aaa;
 }
 
-.video-info p {
-    margin: 0;
-    font-size: 12px;
-    color: #aaa;
-}
-
-/* Modern Popup Overlay System */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
-}
-
-.modal-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.modal-box {
-    background-color: #1f1f1f;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    border: 1px solid #333;
-}
-
-.modal-box h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #ff4757;
-}
-
-.modal-box label {
-    display: block;
-    font-size: 13px;
-    color: #aaa;
-    margin-bottom: 5px;
-}
-
-.modal-box input, .modal-box select {
-    width: 100%;
-    padding: 10px;
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-    font-size: 14px;
-}
-
-.modal-box input:focus, .modal-box select:focus {
-    outline: none;
-    border-color: #ff4757;
-}
-
-/* Action Control Configuration inside Modal */
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.modal-actions button {
-    padding: 10px 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.cancel-btn {
-    background-color: #333;
-    color: white;
-}
-
-.cancel-btn:hover {
-    background-color: #444;
-}
-
-.save-btn {
-    background-color: #2ed573;
-    color: white;
-}
-
-.save-btn:hover {
-    background-color: #26af5f;
-}
-
-/* Mobile Screen Modifications */
-@media (max-width: 768px) {
-    .layout-container {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        width: auto;
-        border-right: none;
-        border-bottom: 1px solid #333;
-        padding: 15px;
-    }
-
-    .sidebar ul {
-        display: flex;
-        overflow-x: auto;
-        gap: 10px;
-    }
-
-    .sidebar li {
-        margin-bottom: 0;
-        white-space: nowrap;
-        padding: 8px 15px;
-    }
-
-    header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    /* --- Lock Screen Styling --- */
+/* Security Gate Lock Box Styles */
 .lock-screen-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #0b0b0b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: #0b0b0b; display: flex; justify-content: center; align-items: center; z-index: 9999;
 }
 
 .lock-box {
-    background-color: #1f1f1f;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-    border: 1px solid #333;
-    text-align: center;
-    max-width: 360px;
-    width: 85%;
+    background-color: #1f1f1f; padding: 40px; border-radius: 12px; text-align: center; max-width: 360px; width: 85%; border: 1px solid #333;
 }
 
-.lock-box h2 {
-    margin-top: 0;
-    color: #ff4757;
-    font-size: 24px;
-}
-
-.lock-box p {
-    color: #aaa;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
+.lock-box h2 { margin-top: 0; color: #ff4757; font-size: 24px; }
+.lock-box p { color: #aaa; font-size: 14px; margin-bottom: 20px; }
 
 .lock-box input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 6px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 16px;
-    letter-spacing: 3px;
+    width: 100%; padding: 12px; background-color: #2d2d2d; border: 1px solid #444; color: white; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-size: 16px; letter-spacing: 3px;
 }
-
-.lock-box input[type="password"]:focus {
-    outline: none;
-    border-color: #ff4757;
-}
+.lock-box input[type="password"]:focus { outline: none; border-color: #ff4757; }
 
 .lock-box button {
-    width: 100%;
-    background-color: #ff4757;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
+    width: 100%; background-color: #ff4757; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; transition: background 0.2s;
 }
+.lock-box button:hover { background-color: #e84118; }
 
-.lock-box button:hover {
-    background-color: #e84118;
-}
+.error-msg { color: #ff4757; font-size: 13px; margin-top: 15px; font-weight: bold; }
 
-.error-msg {
-    color: #ff4757 !important;
-    font-size: 13px !important;
-    margin-top: 15px !important;
-    margin-bottom: 0 !important;
-    font-weight: bold;
-}
+/* Mobile Aspect Responsiveness Changes */
+@media (max-width: 768px) {
+    .layout-container { flex-direction: column; }
+    .sidebar { width: auto; border-right: none; border-bottom: 1px solid #333; padding: 15px; }
+    .sidebar ul { display: flex; overflow-x: auto; gap: 10px; }
+    .sidebar li { margin-bottom: 0; white-space: nowrap; padding: 8px 15px; }
 }
